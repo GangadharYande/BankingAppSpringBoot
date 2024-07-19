@@ -198,9 +198,9 @@ Update the application.properties or application.yml file with your MySQL databa
    ```
 
 5 . Running Tests 
-  ```bash 
-     mvn test
-  ```
+   ```bash 
+      mvn test
+   ```
 
 This documentation provides a comprehensive guide to developing, deploying, and managing a Banking Application built with Spring Boot, covering its features, architecture, and security mechanisms in detail.
 
