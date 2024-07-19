@@ -1,97 +1,94 @@
-https://docs.google.com/document/d/1bjRA-otkv5AvSF3Cc2utkT4OicEBBQrbRJ0q3Tdxm2c/edit?usp=sharing# Banking Application with Spring Boot - Documentation
+# Banking Application with Spring Boot
 
 ## Table of Contents
-1. [Introduction](#introduction)
-2. [Technologies Used](#technologies-used)
-3. [Features](#features)
-   - [User Management](#user-management)
-   - [Account Management](#account-management)
-   - [Transactions](#transactions)
-   - [Notifications](#notifications)
-4. [Architecture](#architecture)
-5. [Database Schema](#database-schema)
-6. [Endpoints](#endpoints)
-7. [Security](#security)
-8. [Getting Started](#getting-started)
-9. [Additional Features](#additional-features)
+- [Introduction](#introduction)
+- [Technologies Used](#technologies-used)
+- [Features](#features)
+- [User Management](#user-management)
+- [Account Management](#account-management)
+- [Transactions](#transactions)
+- [Notifications](#notifications)
+- [Architecture](#architecture)
+- [Database Schema](#database-schema)
+- [Endpoints](#endpoints)
+- [Security](#security)
+- [Development Instructions](#development-instructions)
 
 ## Introduction
-This documentation provides a comprehensive guide for a Banking Application built using Spring Boot. The application covers major functionalities like user management, account management, transactions, and notifications.
+This is a comprehensive Banking Application built with Spring Boot. The application is designed to manage users, accounts, and transactions efficiently while ensuring security and reliability. It includes advanced features such as audit logging, role-based access control, and comprehensive notification systems.
 
 ## Technologies Used
-- Spring Boot
-- Spring Data JPA
-- Spring Security
-- Hibernate
-- MySQL/PostgreSQL
-- Thymeleaf (for front-end)
-- RESTful APIs
-- Maven/Gradle
+- **Spring Boot:** Framework for building Java-based applications.
+- **Spring Data JPA:** Abstraction over JPA for database operations.
+- **Spring Security:** For securing the application.
+- **H2 Database:** In-memory database for development and testing.
+- **MySQL:** Production database.
+- **Thymeleaf:** Template engine for rendering views.
+- **RESTful API:** For client-server communication.
+- **JUnit & Mockito:** For unit and integration testing.
+- **Docker:** Containerization of the application.
+- **Swagger:** API documentation and testing.
 
 ## Features
+- **User Management:** Registration, login, and profile management.
+- **Account Management:** Creation and management of bank accounts.
+- **Transactions:** Money transfers, deposits, and withdrawals.
+- **Notifications:** Email and SMS notifications for transactions.
+- **Security:** Authentication and authorization using Spring Security.
+- **Audit Logging:** Tracking of user activities and transactions.
+- **Role-Based Access Control:** Different roles and permissions for users.
 
-### 1. User Management
-#### a. User Registration (Account Creation)
-Users can create a new account by providing necessary details such as CustomerID, Account Number, First Name, Last Name, Phone Number, Email Address, and password. The UserAccounts table will be created in the database with the following schema:
-- **CustomerID:** Alphanumeric (0-9, A-Z) with a fixed length of 9 characters, ensuring uniqueness and allowing multiple account numbers.
-- **Account Number:** Numeric only, with a length of 14 characters.
-- **Password:** Combination of a-z, A-Z, 0-7, and symbols.
-- **First Name, Last Name, Phone Number, Email Address:** Will have default values.
+## User Management
+### Registration
+Users can register by providing necessary details such as name, email, password, and contact information. The registration process includes email verification.
 
-#### b. User Login
-Users can log in using either:
-- Customer ID and password + Email OTP
-- Email ID and password + Registered Phone OTP
+### Login
+Users can log in using their email and password. JWT tokens are used for session management.
 
-#### c. Dashboard
-After login, users will be directed to a dashboard displaying:
-- Available Balance
-- Options to update personal details
-- Transaction history
-- Account settings where users can:
-  - Link other accounts (e.g., Business Account, Loan Account)
-  - Remove other accounts
-  - Delete Customer ID (requires OTP verification for deletion)
+### Profile Management
+Users can view and update their profile information, including password changes and contact details.
 
-#### d. User Delete (Account Deletion)
-Users can delete their accounts permanently from the application after OTP verification.
+## Account Management
+### Account Creation
+Users can create multiple bank accounts. Each account will have a unique account number, balance, and type (savings, current, etc.).
 
-### 2. Account Management
-#### a. View Account
-Users can view their account details such as account number, account type, balance, and other relevant information.
+### Account Operations
+- **View Account Details:** Users can view details of their accounts, including balance and transaction history.
+- **Update Account:** Users can update account settings like account type and associated email for notifications.
 
-#### b. Account Deletion
-Users can delete an account. This requires proper authorization and may include security checks.
+## Transactions
+### Money Transfer
+Users can transfer money between accounts. The application ensures sufficient balance and updates the transaction history accordingly.
 
-#### c. Account Creation
-Users can create multiple accounts of different types (savings, checking, etc.).
+### Deposit and Withdrawal
+Users can deposit or withdraw money from their accounts. These operations update the account balance and generate corresponding transactions.
 
-### 3. Transactions
-  #### a. Create Transaction
-Users can create transactions such as deposits, withdrawals, and payments.
+### Transaction History
+Users can view the history of transactions, filter by date range, and search for specific transactions.
 
-  #### b. View Transaction History
-Users can view their transaction history with details such as date, amount, and transaction type.
+## Notifications
+### Email Notifications
+Users receive email notifications for significant events such as account creation, transactions, and profile updates.
 
-  #### c. Transfer Funds
-Users can transfer funds between their own accounts or to other users' accounts within the application.
-
-### 4. Notifications
-  #### a. SMS Notifications
-Users receive SMS notifications for critical activities such as account creation, transactions, and account deletion.
-
-  #### b. Email Notifications
-Users receive email notifications for activities such as registration, transactions, and profile updates.
+### SMS Notifications
+SMS notifications are sent for critical transactions like withdrawals and deposits.
 
 ## Architecture
-The application follows a multi-tier architecture:
-- **Presentation Layer:** Handles the user interface (UI) using Thymeleaf.
-- **Business Layer:** Contains the business logic implemented using Spring services.
-- **Persistence Layer:** Manages database interactions using Spring Data JPA and Hibernate.
-- **Database Layer:** Stores user and transaction data in a relational database (MySQL/PostgreSQL).
+The application follows a layered architecture:
+- **Controller Layer:** Handles HTTP requests and responses.
+- **Service Layer:** Contains business logic.
+- **Repository Layer:** Manages database interactions.
+- **Security Layer:** Handles authentication and authorization.
 
 ## Database Schema
 ### Tables
+- **Users:** Stores user information.
+- **Accounts:** Stores account details.
+- **Account type:** Store the type of account  w.r.t customer_id
+- **Transactions:** Stores transaction records.
+- **Notifications:** Stores notification preferences and history.
+  
+### Tables Descriptions 
 #### UserAccounts
 - customer_id (PRIMARY KEY)
 - account_number
@@ -103,14 +100,18 @@ The application follows a multi-tier architecture:
 
 #### Accounts
 - id (PRIMARY KEY)
-- user_id (FOREIGN KEY)
+- user_id (FOREIGN KEY referencing Users.customer_id)
 - account_number
-- account_type
-- balance
+- account_type  (Could be a  Saving, Current or Loan) 
+- balance  (Will be part  of dashboard  balance will be visible w.r.t account type)
+
+#### AccountTypes
+- id (PRIMARY KEY)
+- type_name (e.g., Saving, Current, Loan) 
 
 #### Transactions
 - id (PRIMARY KEY)
-- account_id (FOREIGN KEY)
+- account_id (FOREIGN KEY referencing Accounts.id)
 - transaction_date
 - transaction_type (debit/credit)
 - transaction_cate (income, expense, transfer)
@@ -118,42 +119,88 @@ The application follows a multi-tier architecture:
 
 #### Notifications
 - id (PRIMARY KEY)
-- user_id (FOREIGN KEY)
+- user_id (FOREIGN KEY referencing Users.customer_id)
 - type (SMS/Email)
 - message
 - timestamp
 
+### Relationships
+- Users-Accounts: One-to-many relationship (one user can have multiple accounts).
+- Accounts-Transactions: One-to-many relationship (one account can have multiple transactions).
+- Users-Notifications: One-to-many relationship (one user can have multiple notifications).
+- Accounts-AccountTypes: Many-to-one relationship (multiple accounts can have the same account type).
+
 ## Endpoints
-### User Management
-- **POST /register:** Register a new user.
-- **POST /login:** User login.
-- **GET /profile:** View user profile.
-- **PUT /profile:** Update user profile.
-- **DELETE /profile:** Delete user account.
+### User Endpoints
+- `POST /api/users/register`: Register a new user.
+- `POST /api/users/login`: User login.
+- `GET /api/users/profile`: Get user profile.
+- `PUT /api/users/profile`: Update user profile.
 
-### Account Management
-- **GET /accounts:** View all user accounts.
-- **POST /accounts:** Create a new account.
-- **DELETE /accounts/{id}:** Delete an account.
+### Account Endpoints
+- `POST /api/accounts`: Create a new account.
+- `GET /api/accounts/{accountId}`: Get account details.
+- `PUT /api/accounts/{accountId}`: Update account details.
 
-### Transactions
-- **POST /transactions:** Create a new transaction.
-- **GET /transactions:** View transaction history.
-- **POST /transactions/transfer:** Transfer funds.
+### Transaction Endpoints
+- `POST /api/transactions/transfer`: Transfer money.
+- `POST /api/transactions/deposit`: Deposit money.
+- `POST /api/transactions/withdraw`: Withdraw money.
+- `GET /api/transactions/history`: Get transaction history.
 
-### Notifications
-- **GET /notifications:** View all notifications.
-- **POST /notifications:** Create a notification.
+### Notification Endpoints
+- `GET /api/notifications`: Get notification preferences.
+- `PUT /api/notifications`: Update notification preferences.
 
 ## Security
-- **Authentication:** Implemented using Spring Security with JWT tokens.
-- **Authorization:** Role-based access control (RBAC) to secure endpoints.
-- **Encryption:** Passwords are stored encrypted using BCrypt.
+### Authentication
+- **JWT Tokens:** Used for securing API endpoints.
+- **Login:** Users authenticate via username and password to receive a JWT token.
 
-## Getting Started
+### Authorization
+- **Role-Based Access Control (RBAC):** Different roles (e.g., admin, user) have different permissions.
+- **Endpoint Protection:** Endpoints are protected based on user roles.
+
+### Encryption
+- **Password Encryption:** User passwords are encrypted using BCrypt.
+- **Data Encryption:** Sensitive data is encrypted in the database.
+
+### Audit Logging
+- **Activity Logging:** All user activities and transactions are logged for audit purposes.
+
+## Development Instructions
 ### Prerequisites
-- Java 17+
-- Maven
-- MySQL/PostgreSQL
+- **Java 17:** Ensure Java 17 is installed.
+- **Maven:** For managing dependencies and building the project.
+- **Docker:** For containerization.
+- **MySQL:** For the production database.
 
+### Setup
+1. **Clone the Repository:**
+   ```bash
+      https://github.com/GangadharYande/BankingAppSpringBoot.git
+2. Configure Database:
+Update the application.properties or application.yml file with your MySQL database configuration.
+   ```bash
+   spring.datasource.url=jdbc:mysql://localhost:3306/bank
+   spring.datasource.username=root
+   spring.datasource.password=yourpassword
+   spring.jpa.hibernate.ddl-auto=update
+   ```
+3. Build the Application:
+   ```bash
+      mvn clean install
+
+   ```
+4. Run the Application:
+   ```bash
+      mvn spring-boot:run
+   ```
+
+5 . Running Tests 
+  ```bash 
+     mvn test
+  ```
+
+This documentation provides a comprehensive guide to developing, deploying, and managing a Banking Application built with Spring Boot, covering its features, architecture, and security mechanisms in detail.
 
